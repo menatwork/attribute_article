@@ -1,5 +1,5 @@
 {
-  "name": "byteworks/contao-metamodelsattribute_article",
+  "name": "hinderlingvolkart/contao-metamodelsattribute_article",
   "description": "Article Attribute for Metamodels",
   "keywords": [
     "contao",
@@ -9,8 +9,8 @@
     "nontranslatable"
   ],
   "type": "contao-module",
-  "homepage": "http://www.byteworks.ch",
-  "license": "GPL-3.0+",
+  "homepage": "http://www.hinderlingvolkart.com",
+  "license": "Commercial",
   "authors": [
     {
       "name": "Ronny Binder",
@@ -20,8 +20,8 @@
     }
   ],
   "support": {
-    "issues": "https://github.com/byteworks-ch/contao-metamodelsattribute_article/issues",
-    "source": "https://github.com/byteworks-ch/contao-metamodelsattribute_article"
+    "email": "support@hinderlingvolkart.com",
+    "issues": "https://tracker.hinderlingvolkart.com/projects/contao-metamodelsattribute_article/issues"
   },
   "require": {
     "php": ">=5.3",
