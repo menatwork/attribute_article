@@ -1,0 +1,44 @@
+{
+  "name": "byteworks/contao-metamodelsattribute_article",
+  "description": "Article Attribute for Metamodels",
+  "keywords": [
+    "contao",
+    "metamodels",
+    "attribute",
+    "article",
+    "nontranslatable"
+  ],
+  "type": "contao-module",
+  "homepage": "http://www.byteworks.ch",
+  "license": "GPL-3.0+",
+  "authors": [
+    {
+      "name": "Ronny Binder",
+      "email": "rbi@hinderlingvolkart.com",
+      "homepage": "http://www.hinderlingvolkart.com/",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/byteworks-ch/contao-metamodelsattribute_article/issues",
+    "source": "https://github.com/byteworks-ch/contao-metamodelsattribute_article"
+  },
+  "require": {
+    "php": ">=5.3",
+    "contao/core": ">=3.2,<3.6",
+    "contao-community-alliance/composer-installer": "*",
+    "metamodels/core": "~2.0"
+  },
+  "autoload": {
+    "psr-0": {
+      "MetaModels": "src"
+    }
+  },
+  "extra": {
+    "contao": {
+      "symlinks": {
+        "contao": "system/modules/metamodelsattribute_article"
+      }
+    }
+  }
+}
