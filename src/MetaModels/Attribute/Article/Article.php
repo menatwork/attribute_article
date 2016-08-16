@@ -64,30 +64,6 @@ class Article extends BaseSimple implements ITranslated
 	/**
 	 * {@inheritDoc}
 	 */
-	protected function prepareTemplate(Template $objTemplate, $arrRowData, $objSettings)
-	{
-		parent::prepareTemplate($objTemplate, $arrRowData, $objSettings);
-
-		$strLanguage = $this->getMetaModel()->isTranslated() ? $this->getMetaModel()->getActiveLanguage() : '-';
-		$objContent = \ContentModel::findPublishedByPidAndTable($arrRowData['id'], $this->getMetaModel()->getTableName());
-		$strContent = '';
-
-		if ($objContent !== null) {
-			while ($objContent->next()) {
-				if ($objContent->mm_slot == $this->getColName() &&
-					$objContent->mm_lang == $strLanguage
-				) {
-					$strContent .= $this->getContentElement($objContent->current());
-				}
-			}
-		}
-
-		$objTemplate->raw = $strContent;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	private function getContentElement($objContent)
 	{
 		if (version_compare(VERSION, '3.5', '>=')) {
@@ -116,14 +92,17 @@ class Article extends BaseSimple implements ITranslated
 	/**
 	 * @param       $strPattern
 	 * @param array $arrLanguages
+     * @return string[]
 	 */
 	public function searchForInLanguages($strPattern, $arrLanguages = array()) {
 		// Needed to fake implement ITranslate.
+		return [];
 	}
 
 	/**
 	 * @param $arrValues
 	 * @param $strLangCode
+     * @return void
 	 */
 	public function setTranslatedDataFor($arrValues, $strLangCode) {
 		// Needed to fake implement ITranslate.
@@ -132,14 +111,37 @@ class Article extends BaseSimple implements ITranslated
 	/**
 	 * @param $arrIds
 	 * @param $strLangCode
+     * @return mixed[]
 	 */
-	public function getTranslatedDataFor($arrIds, $strLangCode) {
-		// Needed to fake implement ITranslate.
+	public function getTranslatedDataFor($arrIds, $strLangCode)
+	{
+		$arrData = [];
+
+		foreach ($arrIds as $intId) {
+			$strLanguage = $this->getMetaModel()->isTranslated() ? $strLangCode : '-';
+			$objContent = \ContentModel::findPublishedByPidAndTable($intId, $this->getMetaModel()->getTableName());
+			$arrContent = [];
+
+			if ($objContent !== null) {
+				while ($objContent->next()) {
+					if ($objContent->mm_slot == $this->getColName() &&
+						$objContent->mm_lang == $strLanguage
+					) {
+						$arrContent[] = $this->getContentElement($objContent->current());
+					}
+				}
+			}
+
+			$arrData[$intId]['value'] = $arrContent;
+		}
+
+		return $arrData;
 	}
 
 	/**
 	 * @param $arrIds
 	 * @param $strLangCode
+     * @return void
 	 */
 	public function unsetValueFor($arrIds, $strLangCode) {
 		// Needed to fake implement ITranslate.
