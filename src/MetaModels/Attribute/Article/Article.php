@@ -23,6 +23,8 @@ use MetaModels\Attribute\ITranslated;
 class Article extends BaseSimple implements ITranslated
 {
 
+	private static $arrCallIds = [];
+
 	/**
 	 * {@inheritdoc}
 	 */
@@ -115,16 +117,27 @@ class Article extends BaseSimple implements ITranslated
 	 */
 	public function getTranslatedDataFor($arrIds, $strLangCode)
 	{
-		$arrData = [];
+		$strTable    = $this->getMetaModel()->getTableName();
+		$strColumn   = $this->getColName();
+		$strLanguage = $this->getMetaModel()->isTranslated() ? $strLangCode : '-';
+		$arrData     = [];
 
-		foreach ($arrIds as $intId) {
-			$strLanguage = $this->getMetaModel()->isTranslated() ? $strLangCode : '-';
-			$objContent = \ContentModel::findPublishedByPidAndTable($intId, $this->getMetaModel()->getTableName());
+		foreach ($arrIds as $intId)
+		{
+			// Continue if it's a recursive call
+			$strCallId  = $strTable . '_' . $strColumn . '_' . $strLanguage . '_' . $intId;
+			if (isset(static::$arrCallIds[$strCallId])) {
+				$arrData[$intId]['value'] = sprintf('RECURSION: %s', $strCallId);
+				continue;
+			}
+			static::$arrCallIds[$strCallId] = true;
+
+			$objContent = \ContentModel::findPublishedByPidAndTable($intId, $strTable);
 			$arrContent = [];
 
 			if ($objContent !== null) {
 				while ($objContent->next()) {
-					if ($objContent->mm_slot == $this->getColName() &&
+					if ($objContent->mm_slot == $strColumn &&
 						$objContent->mm_lang == $strLanguage
 					) {
 						$arrContent[] = $this->getContentElement($objContent->current());
@@ -133,6 +146,7 @@ class Article extends BaseSimple implements ITranslated
 			}
 
 			$arrData[$intId]['value'] = $arrContent;
+			unset(static::$arrCallIds[$strCallId]);
 		}
 
 		return $arrData;
