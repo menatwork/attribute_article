@@ -117,6 +117,9 @@ class Article extends BaseSimple implements ITranslated
 	 */
 	public function getTranslatedDataFor($arrIds, $strLangCode)
 	{
+		// Generate only for frontend (speeds up the backend a little)
+		if (TL_MODE == 'BE') return [];
+
 		$strTable    = $this->getMetaModel()->getTableName();
 		$strColumn   = $this->getColName();
 		$strLanguage = $this->getMetaModel()->isTranslated() ? $strLangCode : '-';
