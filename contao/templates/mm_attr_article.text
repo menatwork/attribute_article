@@ -1,1 +1,1 @@
-<?php echo implode('', $this->raw['value']); ?>
+<?php if (is_array($this->raw)) echo implode('', $this->raw['value']); ?>
