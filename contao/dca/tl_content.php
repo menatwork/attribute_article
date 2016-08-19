@@ -22,6 +22,15 @@ if (Input::get('do') == 'article' && Input::get('type') == 'metamodels_article')
 	$GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']       = 'TableMetaModelsArticle';
 	$GLOBALS['TL_DCA']['tl_content']['config']['ptable']              = Input::get('ptable');
 	$GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][] = ['mm_tl_content', 'save'];
+
+	// Quickfix: Allow access to every one who has access to the backend module "article"
+	foreach ($GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'] as $i => $arrCallback) {
+		if ($arrCallback[0] == 'tl_content' && $arrCallback[1] == 'checkPermission') {
+			array_splice($GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'], $i, 1);
+			break;
+		}
+	}
+
 	$GLOBALS['TL_DCA']['tl_content']['list']['sorting']['filter'][]   = ['mm_slot=?', Input::get('slot')];
 	$GLOBALS['TL_DCA']['tl_content']['list']['sorting']['filter'][]   = ['mm_lang=?', Input::get('lang')];
 }
