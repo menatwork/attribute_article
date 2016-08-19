@@ -65,8 +65,7 @@ class MetaModelsArticle extends Widget
 	public function generate()
 	{
 		$strQuery = http_build_query([
-			'do'     => 'article',
-			'type'   => 'metamodels_article',
+			'do'     => 'metamodels_article',
 			'table'  => 'tl_content',
 			'ptable' => $this->strTable,
 			'id'     => $this->currentRecord,
