@@ -65,15 +65,14 @@ class MetaModelsArticle extends Widget
 	public function generate()
 	{
 		$strQuery = http_build_query([
-			'do'     => 'metamodels_article',
-			'table'  => 'tl_content',
-			'ptable' => $this->strTable,
-			'id'     => $this->currentRecord,
-			'slot'   => $this->strName,
-			'lang'   => $this->lang,
-			'popup'  => 1,
-			'nb'     => 1,
-			'rt'     => REQUEST_TOKEN,
+			'do'    => 'metamodel_' . $this->strTable,
+			'table' => 'tl_content',
+			'id'    => $this->currentRecord,
+			'slot'  => $this->strName,
+			'lang'  => $this->lang,
+			'popup' => 1,
+			'nb'    => 1,
+			'rt'    => REQUEST_TOKEN,
 		]);
 
 		return sprintf(
