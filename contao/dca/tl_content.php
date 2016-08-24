@@ -23,7 +23,7 @@ $strTable  = Input::get('table');
 
 if (substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content') {
 	$GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']       = 'TableMetaModelsArticle';
-	$GLOBALS['TL_DCA']['tl_content']['config']['ptable']              = substr($strModule, 10);
+	$GLOBALS['TL_DCA']['tl_content']['config']['ptable']              = Input::get('ptable');
 	$GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][] = ['mm_tl_content', 'save'];
 	$GLOBALS['TL_DCA']['tl_content']['list']['sorting']['filter'][]   = ['mm_slot=?', Input::get('slot')];
 	$GLOBALS['TL_DCA']['tl_content']['list']['sorting']['filter'][]   = ['mm_lang=?', Input::get('lang')];

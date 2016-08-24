@@ -65,21 +65,69 @@ class MetaModelsArticle extends Widget
 	public function generate()
 	{
 		$strQuery = http_build_query([
-			'do'    => 'metamodel_' . $this->strTable,
-			'table' => 'tl_content',
-			'id'    => $this->currentRecord,
-			'slot'  => $this->strName,
-			'lang'  => $this->lang,
-			'popup' => 1,
-			'nb'    => 1,
-			'rt'    => REQUEST_TOKEN,
+			'do'     => 'metamodel_' . $this->getRootMetaModelTable($this->strTable) ?: 'table_not_found',
+			'table'  => 'tl_content',
+			'ptable' => $this->strTable,
+			'id'     => $this->currentRecord,
+			'slot'   => $this->strName,
+			'lang'   => $this->lang,
+			'popup'  => 1,
+			'nb'     => 1,
+			'rt'     => REQUEST_TOKEN,
 		]);
 
 		return sprintf(
-			'<div><p><a href="%s" class="tl_submit" onclick="%s">Bearbeiten</a></p></div>',
+			'<div><p><a href="%s" class="tl_submit" onclick="%s">%s</a></p></div>',
 			'contao/main.php?' . $strQuery,
-			'Backend.openModalIframe({width:768,title:\''.$this->strLabel.'\',url:this.href});return false'
+			'Backend.openModalIframe({width:768,title:\''.$this->strLabel.'\',url:this.href});return false',
+			$GLOBALS['TL_LANG']['MSC']['edit']
 		);
+	}
+
+	/**
+	 * @param string
+	 * @param mixed
+	 */
+	private function getRootMetaModelTable($strTable)
+	{
+		$arrTables = [];
+		$objTables = Database::getInstance()
+			->execute('
+				SELECT tableName, d.renderType, d.ptable
+				FROM tl_metamodel AS m
+				JOIN tl_metamodel_dca AS d
+				ON m.id = d.pid
+			')
+		;
+
+		while ($objTables->next()) {
+			$arrTables[$objTables->tableName] = [
+				'renderType' => $objTables->renderType,
+				'ptable'     => $objTables->ptable,
+			];
+		}
+
+		$getTable = function($strTable) use (&$getTable, $arrTables)
+		{
+			if (!isset($arrTables[$strTable])) {
+				return false;
+			}
+
+			$arrTable = $arrTables[$strTable];
+
+			switch ($arrTable['renderType']) {
+				case 'standalone':
+					return $strTable;
+
+				case 'ctable':
+					return $getTable($arrTable['ptable']);
+
+				default:
+					throw new \Exception('Unexpected case: '.$arrTable['renderType']);
+			}
+		};
+
+		return $getTable($strTable);
 	}
 
 }
