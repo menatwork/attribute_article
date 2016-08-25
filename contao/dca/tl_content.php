@@ -27,6 +27,13 @@ if (substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content') {
 	$GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][] = ['mm_tl_content', 'save'];
 	$GLOBALS['TL_DCA']['tl_content']['list']['sorting']['filter'][]   = ['mm_slot=?', Input::get('slot')];
 	$GLOBALS['TL_DCA']['tl_content']['list']['sorting']['filter'][]   = ['mm_lang=?', Input::get('lang')];
+	
+	$GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['addMainLangContent'] = [
+		'label'      => &$GLOBALS['TL_LANG']['tl_metamodel_attribute']['addMainLangContent'],
+		'href'       => 'key=addMainLangContent',
+		'class'      => 'header_new',
+		'attributes' => 'onclick="Backend.getScrollOffset()"',
+    ];
 }
 
 
