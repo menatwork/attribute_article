@@ -64,34 +64,6 @@ class Article extends BaseSimple implements ITranslated
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	private function getContentElement($objContent)
-	{
-		if (version_compare(VERSION, '3.5', '>=')) {
-			return \Controller::getContentElement($objContent);
-		}
-
-		// In contao < 3.5 the function is not directly available
-		if (!class_exists('ControllerHelper')) {
-			eval('
-				class ControllerHelper extends Controller {
-					public function __construct() {
-						// Needed as the parent constructor is not public!
-					}
-
-					public function getContentElement($objContent, $strColumn=\'main\') {
-						return parent::getContentElement($objContent, $strColumn);
-					}
-				}
-			');
-		}
-
-		$objControllerHelper = new \ControllerHelper();
-		return $objControllerHelper->getContentElement($objContent);
-	}
-
-	/**
 	 * @param       $strPattern
 	 * @param array $arrLanguages
      * @return string[]
@@ -162,6 +134,34 @@ class Article extends BaseSimple implements ITranslated
 	 */
 	public function unsetValueFor($arrIds, $strLangCode) {
 		// Needed to fake implement ITranslate.
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	private function getContentElement($objContent)
+	{
+		if (version_compare(VERSION, '3.5', '>=')) {
+			return \Controller::getContentElement($objContent);
+		}
+
+		// In contao < 3.5 the function is not directly available
+		if (!class_exists('ControllerHelper')) {
+			eval('
+				class ControllerHelper extends Controller {
+					public function __construct() {
+						// Needed as the parent constructor is not public!
+					}
+
+					public function getContentElement($objContent, $strColumn=\'main\') {
+						return parent::getContentElement($objContent, $strColumn);
+					}
+				}
+			');
+		}
+
+		$objControllerHelper = new \ControllerHelper();
+		return $objControllerHelper->getContentElement($objContent);
 	}
 
 }
