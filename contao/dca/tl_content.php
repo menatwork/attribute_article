@@ -65,8 +65,8 @@ class mm_tl_content extends tl_content
             return;
         }
 
-        $strModule      = Input::get('do');
-        $strParentTable = substr($strModule, 10);
+        $strParentTable = Input::get('ptable');
+        $strParentTable = preg_replace('#[^A-Za-z0-9_]#', '', $strParentTable);
 
         // Check the current action
         switch (Input::get('act'))
@@ -134,9 +134,9 @@ class mm_tl_content extends tl_content
     {
         if ($blnIsPid)
         {
-            $objContent = $this->Database->prepare("SELECT 1 FROM tl_content WHERE pid=? AND ptable=?")
+            $objContent = $this->Database->prepare("SELECT 1 FROM `$ptable` WHERE id=?")
                 ->limit(1)
-                ->execute($id, $ptable);
+                ->execute($id);
         }
         else
         {
