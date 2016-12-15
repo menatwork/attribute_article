@@ -132,25 +132,30 @@ class mm_tl_content extends tl_content
      */
     protected function checkAccessToElement($id, $ptable, $blnIsPid=false)
     {
-        if ($blnIsPid)
-        {
-            $objContent = $this->Database->prepare("SELECT 1 FROM `$ptable` WHERE id=?")
-                ->limit(1)
-                ->execute($id);
-        }
-        else
-        {
-            $objContent = $this->Database->prepare("SELECT 1 FROM tl_content WHERE id=? AND ptable=?")
-                ->limit(1)
-                ->execute($id, $ptable);
-        }
+        $strScript = Environment::get('script');
 
-        // Invalid ID
-        if ($objContent->numRows < 1)
+        if ($strScript != 'contao/page.php' && $strScript != 'contao/file.php') // Workaround for missing ptable when called via Page/File Picker
         {
-            $this->log('Invalid content element ID ' . $id, __METHOD__, TL_ERROR);
+            if ($blnIsPid)
+            {
+                $objContent = $this->Database->prepare("SELECT 1 FROM `$ptable` WHERE id=?")
+                    ->limit(1)
+                    ->execute($id);
+            }
+            else
+            {
+                $objContent = $this->Database->prepare("SELECT 1 FROM tl_content WHERE id=? AND ptable=?")
+                    ->limit(1)
+                    ->execute($id, $ptable);
+            }
 
-            return false;
+            // Invalid ID
+            if ($objContent->numRows < 1)
+            {
+                $this->log('Invalid content element ID ' . $id, __METHOD__, TL_ERROR);
+
+                return false;
+            }
         }
 
         return true;
