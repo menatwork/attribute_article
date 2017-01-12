@@ -27,6 +27,7 @@ class BackendSubscriber extends BaseSubscriber
 {
 	private $intDuplicationSourceId;
 
+
 	/**
 	 * Register all listeners to handle creation of a data container.
 	 *
@@ -35,9 +36,10 @@ class BackendSubscriber extends BaseSubscriber
 	protected function registerEventsInDispatcher()
 	{
 		$this->addListener(ManipulateWidgetEvent::NAME, array($this, 'setWidgetLanguage'));
-		$this->addListener(PostDuplicateModelEvent::NAME, array($this, 'setDuplicationSourceId'));
-		$this->addListener(PostPasteModelEvent::NAME, array($this, 'duplicateContentEntries'));
+		$this->addListener(PostDuplicateModelEvent::NAME, array($this, 'handlePostDuplicationModel'));
+		$this->addListener(PostPasteModelEvent::NAME, array($this, 'handlePostPasteModel'));
 	}
+
 
 	/**
 	 * Set the language for the widget.
@@ -59,41 +61,65 @@ class BackendSubscriber extends BaseSubscriber
 		$event->getWidget()->lang = $language;
 	}
 
+
 	/**
-	 * Set the source id for duplicating the content entries below.
-	 *
 	 * @param PostDuplicateModelEvent $event The event.
 	 *
 	 * @return void
 	 */
-	public function setDuplicationSourceId(PostDuplicateModelEvent $event)
+	public function handlePostDuplicationModel(PostDuplicateModelEvent $event)
 	{
-		/* @var Model $objModel */
-		$objModel = $event->getSourceModel();
+		/* @var Model $objSourceModel */
+		$objSourceModel = $event->getSourceModel();
 
-		$this->intDuplicationSourceId = $objModel->getId();
+		/* @var Model $objDestinationModel */
+		$objDestinationModel = $event->getModel();
+
+		$strTable         = $objDestinationModel->getProviderName();
+		$intSourceId      = $objSourceModel->getId();
+		$intDestinationId = $objDestinationModel->getId();
+
+		if ($intDestinationId) {
+			$this->duplicateContentEntries($strTable, $intSourceId, $intDestinationId);
+		} else {
+			$this->intDuplicationSourceId = $intSourceId;
+		}
 	}
 
+
 	/**
-	 * Duplicate the content entries
-	 *
 	 * @param PostPasteModelEvent $event The event.
 	 *
 	 * @return void
 	 */
-	public function duplicateContentEntries(PostPasteModelEvent $event)
+	public function handlePostPasteModel(PostPasteModelEvent $event)
 	{
 		if (!$this->intDuplicationSourceId) {
 			return;
 		}
 
-		/* @var Model $objModel */
-		$objModel = $event->getModel();
+		/* @var Model $objDestinationModel */
+		$objDestinationModel = $event->getModel();
 
-		$strTable         = $objModel->getProviderName();
+		$strTable         = $objDestinationModel->getProviderName();
 		$intSourceId      = $this->intDuplicationSourceId;
-		$intDestinationId = $objModel->getId();
+		$intDestinationId = $objDestinationModel->getId();
 
+		$this->duplicateContentEntries($strTable, $intSourceId, $intDestinationId);
+	}
+
+
+	/**
+	 * Duplicate the content entries
+	 *
+	 * @param string $strTable
+	 * @param int $intSourceId
+	 * @param int $intDestinationId
+	 *
+	 * @return void
+	 */
+	private function duplicateContentEntries($strTable, $intSourceId, $intDestinationId)
+	{
 		$objContent = \Database::getInstance()
 			->prepare('SELECT * FROM tl_content WHERE pid=? AND ptable=?')
 			->execute($intSourceId, $strTable)
