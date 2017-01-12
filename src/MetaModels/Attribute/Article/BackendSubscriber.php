@@ -13,6 +13,10 @@
 namespace MetaModels\Attribute\Article;
 
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\ManipulateWidgetEvent;
+use ContaoCommunityAlliance\DcGeneral\Event\PostDuplicateModelEvent;
+use ContaoCommunityAlliance\DcGeneral\Event\PostPasteModelEvent;
+use MetaModels\DcGeneral\Data\Driver;
+use MetaModels\DcGeneral\Data\Model;
 use MetaModels\DcGeneral\Events\BaseSubscriber;
 
 
@@ -21,6 +25,7 @@ use MetaModels\DcGeneral\Events\BaseSubscriber;
  */
 class BackendSubscriber extends BaseSubscriber
 {
+	private $intDuplicationSourceId;
 
 	/**
 	 * Register all listeners to handle creation of a data container.
@@ -29,7 +34,9 @@ class BackendSubscriber extends BaseSubscriber
 	 */
 	protected function registerEventsInDispatcher()
 	{
-		$this->addListener(ManipulateWidgetEvent::NAME, array($this, 'setLanguage'));
+		$this->addListener(ManipulateWidgetEvent::NAME, array($this, 'setWidgetLanguage'));
+		$this->addListener(PostDuplicateModelEvent::NAME, array($this, 'setDuplicationSourceId'));
+		$this->addListener(PostPasteModelEvent::NAME, array($this, 'duplicateContentEntries'));
 	}
 
 	/**
@@ -39,16 +46,71 @@ class BackendSubscriber extends BaseSubscriber
 	 *
 	 * @return void
 	 */
-	public function setLanguage(ManipulateWidgetEvent $event)
+	public function setWidgetLanguage(ManipulateWidgetEvent $event)
 	{
 		if ($event->getWidget()->type != 'metamodelsArticle') {
 			return;
 		}
 
+		/* @var Driver $dataProvider */
 		$dataProvider = $event->getEnvironment()->getDataProvider($event->getModel()->getProviderName());
 		$language     = $dataProvider->getCurrentLanguage() ?: '-';
 
 		$event->getWidget()->lang = $language;
+	}
+
+	/**
+	 * Set the source id for duplicating the content entries below.
+	 *
+	 * @param PostDuplicateModelEvent $event The event.
+	 *
+	 * @return void
+	 */
+	public function setDuplicationSourceId(PostDuplicateModelEvent $event)
+	{
+		/* @var Model $objModel */
+		$objModel = $event->getSourceModel();
+
+		$this->intDuplicationSourceId = $objModel->getId();
+	}
+
+	/**
+	 * Duplicate the content entries
+	 *
+	 * @param PostPasteModelEvent $event The event.
+	 *
+	 * @return void
+	 */
+	public function duplicateContentEntries(PostPasteModelEvent $event)
+	{
+		if (!$this->intDuplicationSourceId) {
+			return;
+		}
+
+		/* @var Model $objModel */
+		$objModel = $event->getModel();
+
+		$strTable         = $objModel->getProviderName();
+		$intSourceId      = $this->intDuplicationSourceId;
+		$intDestinationId = $objModel->getId();
+
+		$objContent = \Database::getInstance()
+			->prepare('SELECT * FROM tl_content WHERE pid=? AND ptable=?')
+			->execute($intSourceId, $strTable)
+		;
+
+		for ($i=0; $objContent->next(); $i++)
+		{
+			$arrContent = $objContent->row();
+			$arrContent['pid'] = $intDestinationId;
+			unset($arrContent['id']);
+
+			\Database::getInstance()
+				->prepare('INSERT INTO tl_content %s')
+				->set($arrContent)
+				->execute()
+			;
+		}
 	}
 
 }
