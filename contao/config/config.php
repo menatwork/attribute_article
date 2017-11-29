@@ -38,7 +38,9 @@ class metamodelsattribute_article extends Backend
 
 	public function addMainLangContent($dc)
 	{
-		$objMetaModel = MetaModels\Factory::getDefaultFactory()->getMetaModel($dc->parentTable);
+		$factory = $GLOBALS['container']['metamodels-factory.factory'];
+		/** @var \MetaModels\IFactory $factory */
+		$objMetaModel = $factory->getMetaModel($dc->parentTable);
 
 		$intId           = $dc->id;
 		$strParentTable  = $dc->parentTable;
