@@ -10,12 +10,11 @@
  *
  */
 
-namespace MetaModels\Attribute\Article;
+namespace MetaModels\AttributeArticleBundle\Attribute;
 
 use MetaModels\Attribute\BaseSimple;
-use MetaModels\Render\Template;
 use MetaModels\Attribute\ITranslated;
-
+use MetaModels\IMetaModel;
 
 /**
  * This is the MetaModelAttribute class for handling article fields.
@@ -24,6 +23,29 @@ class Article extends BaseSimple implements ITranslated
 {
 
 	private static $arrCallIds = [];
+
+    /**
+     * Create a new instance.
+     *
+     * @param IMetaModel            $objMetaModel     The MetaModel instance this attribute belongs to.
+     * @param array                 $arrData          The attribute information array.
+     */
+    public function __construct(
+        IMetaModel $objMetaModel,
+        $arrData = []
+    ){
+        parent::__construct($objMetaModel, $arrData);
+    }
+
+    /**
+     * @param       $strPattern
+     * @param array $arrLanguages
+     * @return string[]
+     */
+    public function searchForInLanguages($strPattern, $arrLanguages = array()) {
+        // Needed to fake implement ITranslate.
+        return [];
+    }
 
 	/**
 	 * {@inheritdoc}
@@ -39,16 +61,16 @@ class Article extends BaseSimple implements ITranslated
 	public function getAttributeSettingNames()
 	{
 		return array_merge(parent::getAttributeSettingNames(), array(
-			//'isunique',
-			//'searchable',
-			//'filterable',
-			//'mandatory',
-			//'allowHtml',
-			//'preserveTags',
-			//'decodeEntities',
-			//'trailingSlash',
-			//'spaceToUnderscore',
-			//'rgxp'
+            //'isunique',
+            //'searchable',
+            //'filterable',
+            //'mandatory',
+            //'allowHtml',
+            //'preserveTags',
+            //'decodeEntities',
+            //'trailingSlash',
+            //'spaceToUnderscore',
+            //'rgxp'
 		));
 	}
 
@@ -58,19 +80,9 @@ class Article extends BaseSimple implements ITranslated
 	public function getFieldDefinition($arrOverrides = array())
 	{
 		$arrFieldDef              = parent::getFieldDefinition($arrOverrides);
-		$arrFieldDef['inputType'] = 'metamodelsArticle';
+		$arrFieldDef['inputType'] = 'MetaModelAttributeArticle';
 
 		return $arrFieldDef;
-	}
-
-	/**
-	 * @param       $strPattern
-	 * @param array $arrLanguages
-     * @return string[]
-	 */
-	public function searchForInLanguages($strPattern, $arrLanguages = array()) {
-		// Needed to fake implement ITranslate.
-		return [];
 	}
 
 	/**
@@ -79,7 +91,7 @@ class Article extends BaseSimple implements ITranslated
      * @return void
 	 */
 	public function setTranslatedDataFor($arrValues, $strLangCode) {
-		// Needed to fake implement ITranslate.
+	    // Needed to fake implement ITranslate.
 	}
 
 	/**

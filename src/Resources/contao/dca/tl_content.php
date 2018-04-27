@@ -38,7 +38,6 @@ if (substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content') {
     ];
 }
 
-
 class mm_tl_content extends tl_content
 {
 
@@ -47,7 +46,7 @@ class mm_tl_content extends tl_content
         parent::__construct();
     }
 
-    public function save($dc)
+    public function save(DataContainer $dc)
 	{
 		Database::getInstance()
 			->prepare('UPDATE tl_content SET mm_slot=?, mm_lang=? WHERE id=?')
@@ -132,7 +131,7 @@ class mm_tl_content extends tl_content
      */
     protected function checkAccessToElement($id, $ptable, $blnIsPid=false)
     {
-        $strScript = Environment::get('script');
+        $strScript = \Environment::get('script');
 
         if ($strScript != 'contao/page.php' && $strScript != 'contao/file.php') // Workaround for missing ptable when called via Page/File Picker
         {

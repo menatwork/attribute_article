@@ -1,5 +1,5 @@
 {
-  "name": "hinderlingvolkart/contao-metamodelsattribute_article",
+  "name": "metamodels/attribute_article",
   "description": "Article Attribute for Metamodels",
   "keywords": [
     "contao",
@@ -8,7 +8,7 @@
     "article",
     "nontranslatable"
   ],
-  "type": "contao-module",
+  "type": "contao-bundle",
   "homepage": "http://www.hinderlingvolkart.com",
   "license": "Commercial",
   "authors": [
@@ -24,21 +24,39 @@
     "issues": "https://tracker.hinderlingvolkart.com/projects/contao-metamodelsattribute_article/issues"
   },
   "require": {
-    "php": ">=5.3",
-    "contao/core": ">=3.2,<3.6",
-    "contao-community-alliance/composer-installer": "*",
-    "metamodels/core": "~2.0"
+    "php": ">=5.6 | ^7.0",
+    "contao/core-bundle": "^4.4",
+    "contao-community-alliance/dc-general": "~2.1@dev",
+    "metamodels/core": "~2.1@dev"
   },
   "autoload": {
-    "psr-0": {
-      "MetaModels": "src"
-    }
+    "psr-4": {
+      "MetaModels\\AttributeArticleBundle\\": "src"
+    },
+    "files": [
+      "src/deprecated-autoload.php"
+    ],
+    "classmap": [
+      "src/Drivers/"
+    ]
   },
+
   "extra": {
+    "contao-manager-plugin": "MetaModels\\AttributeArticleBundle\\ContaoManager\\Plugin",
     "contao": {
-      "symlinks": {
-        "contao": "system/modules/metamodelsattribute_article"
+      "transifex": {
+        "project": "metamodels",
+        "prefix": "attribute_article-",
+        "languages_cto": "src/Resources/contao/languages",
+        "languages_tx": ".tx"
       }
     }
-  }
+  },
+  "minimum-stability": "dev",
+  "repositories": [
+    {
+      "type": "git",
+      "url": "git@gitlab.com:metamodels/core.git"
+    }
+  ]
 }

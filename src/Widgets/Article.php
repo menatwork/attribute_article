@@ -10,7 +10,9 @@
  *
  */
 
-class MetaModelsArticle extends Widget
+namespace MetaModels\AttributeArticleBundle\Widgets;
+
+class Article extends \Widget
 {
 
 	/**
@@ -76,11 +78,17 @@ class MetaModelsArticle extends Widget
 			'rt'     => REQUEST_TOKEN,
 		]);
 
+		if(!empty($GLOBALS['TL_LANG']['MSC']['edit'])) {
+		    $edit = $GLOBALS['TL_LANG']['MSC']['edit'];
+        }else {
+            $edit = "Bearbeiten";
+        }
+
 		return sprintf(
 			'<div><p><a href="%s" class="tl_submit" onclick="%s">%s</a></p></div>',
 			'contao/main.php?' . $strQuery,
 			'Backend.openModalIframe({width:768,title:\''.$this->strLabel.'\',url:this.href});return false',
-			$GLOBALS['TL_LANG']['MSC']['edit']
+		    $edit
 		);
 	}
 
@@ -91,7 +99,7 @@ class MetaModelsArticle extends Widget
 	private function getRootMetaModelTable($strTable)
 	{
 		$arrTables = [];
-		$objTables = Database::getInstance()
+		$objTables = \Database::getInstance()
 			->execute('
 				SELECT tableName, d.renderType, d.ptable
 				FROM tl_metamodel AS m

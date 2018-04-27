@@ -1,0 +1,5 @@
+services:
+    metamodels.attribute_article.factory:
+        class: MetaModels\AttributeArticleBundle\Attribute\AttributeTypeFactory
+        tags:
+          - { name: metamodels.attribute_factory }

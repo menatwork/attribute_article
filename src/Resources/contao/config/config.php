@@ -13,7 +13,7 @@
 /**
  * Register backend form fields
  */
-$GLOBALS['BE_FFL']['metamodelsArticle'] = 'MetaModelsArticle';
+$GLOBALS['BE_FFL']['MetaModelAttributeArticle'] = 'MetaModels\\AttributeArticleBundle\\Widgets\\Article';
 
 /**
  * Register hooks
@@ -38,7 +38,7 @@ class metamodelsattribute_article extends Backend
 
 	public function addMainLangContent($dc)
 	{
-		$factory = $GLOBALS['container']['metamodels-factory.factory'];
+		$factory = $GLOBALS['container']['metamodels.attribute_article.factory'];
 		/** @var \MetaModels\IFactory $factory */
 		$objMetaModel = $factory->getMetaModel($dc->parentTable);
 

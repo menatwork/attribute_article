@@ -10,36 +10,20 @@
  *
  */
 
-namespace MetaModels\Attribute\Article;
+namespace MetaModels\AttributeArticleBundle\EventListener;
 
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\ManipulateWidgetEvent;
 use ContaoCommunityAlliance\DcGeneral\Event\PostDuplicateModelEvent;
 use ContaoCommunityAlliance\DcGeneral\Event\PostPasteModelEvent;
 use MetaModels\DcGeneral\Data\Driver;
 use MetaModels\DcGeneral\Data\Model;
-use MetaModels\DcGeneral\Events\BaseSubscriber;
-
 
 /**
  * Handles event operations on tl_metamodel_dcasetting.
  */
-class BackendSubscriber extends BaseSubscriber
+class BackendEventListener
 {
 	private $intDuplicationSourceId;
-
-
-	/**
-	 * Register all listeners to handle creation of a data container.
-	 *
-	 * @return void
-	 */
-	protected function registerEventsInDispatcher()
-	{
-		$this->addListener(ManipulateWidgetEvent::NAME, array($this, 'setWidgetLanguage'));
-		$this->addListener(PostDuplicateModelEvent::NAME, array($this, 'handlePostDuplicationModel'));
-		$this->addListener(PostPasteModelEvent::NAME, array($this, 'handlePostPasteModel'));
-	}
-
 
 	/**
 	 * Set the language for the widget.
@@ -50,10 +34,9 @@ class BackendSubscriber extends BaseSubscriber
 	 */
 	public function setWidgetLanguage(ManipulateWidgetEvent $event)
 	{
-		if ($event->getWidget()->type != 'metamodelsArticle') {
-			return;
+		if ($event->getWidget()->type != 'article') {
+		    return;
 		}
-
 		/* @var Driver $dataProvider */
 		$dataProvider = $event->getEnvironment()->getDataProvider($event->getModel()->getProviderName());
 		$language     = $dataProvider->getCurrentLanguage() ?: '-';

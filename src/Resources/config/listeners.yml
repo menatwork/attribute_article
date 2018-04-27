@@ -1,0 +1,19 @@
+services:
+    metamodels.attribute_article.listeners.backend_listener:
+        class: MetaModels\AttributeArticleBundle\EventListener\BackendEventListener
+        tags:
+          - {
+              name: kernel.event_listener,
+              event: 'dc-general.view.contao2backend.manipulate-widget',
+              method: 'setWidgetLanguage'
+            }
+          - {
+              name: kernel.event_listener,
+              event: 'dc-general.model.post-duplicate',
+              method: 'handlePostDuplicationModel'
+            }
+          - {
+              name: kernel.event_listener,
+              event: 'dc-general.model.post-paste',
+              method: 'handlePostPasteModel'
+            }
