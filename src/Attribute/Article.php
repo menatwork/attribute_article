@@ -12,15 +12,24 @@
 
 namespace MetaModels\AttributeArticleBundle\Attribute;
 
+use Contao\System;
 use MetaModels\Attribute\BaseSimple;
 use MetaModels\Attribute\ITranslated;
 use MetaModels\IMetaModel;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * This is the MetaModelAttribute class for handling article fields.
  */
 class Article extends BaseSimple implements ITranslated
 {
+
+    /**
+     * The event dispatcher.
+     *
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
 
 	private static $arrCallIds = [];
 
@@ -32,9 +41,23 @@ class Article extends BaseSimple implements ITranslated
      */
     public function __construct(
         IMetaModel $objMetaModel,
-        $arrData = []
+        $arrData = [],
+        EventDispatcherInterface $eventDispatcher = null
     ){
         parent::__construct($objMetaModel, $arrData);
+
+        if (null === $eventDispatcher) {
+            // @codingStandardsIgnoreStart Silencing errors is discouraged
+            @\trigger_error(
+                'Event dispatcher is missing. It has to be passed in the constructor. Fallback will be dropped.',
+                E_USER_DEPRECATED
+            );
+            // @codingStandardsIgnoreEnd
+            $eventDispatcher = System::getContainer()->get('event_dispatcher');
+        }
+
+        $this->eventDispatcher = $eventDispatcher;
+
     }
 
     /**

@@ -17,3 +17,19 @@ services:
               event: 'dc-general.model.post-paste',
               method: 'handlePostPasteModel'
             }
+    metamodels.attribute_article.listeners.get_property_options:
+            class: MetaModels\AttributeArticleBundle\EventListener\GetOptionsListener
+            arguments:
+              - '@metamodels.factory'
+            tags:
+              - {
+                  name: kernel.event_listener,
+                  event: 'dc-general.view.contao2backend.get-property-options',
+                  method: getPropertyOptions
+                }
+    metamodels.attribute_article.backend_listner.get_options:
+           class: MetaModels\AttributeArticleBundle\EventListener\GetOptionsListener
+           arguments:
+             - '@metamodels.factory'
+           tags:
+             - { name: kernel.event_listener, event: 'men-at-work.multi-column-wizard.get-options', method: getOptions }

@@ -12,7 +12,7 @@
 
 namespace MetaModels\AttributeArticleBundle\Widgets;
 
-class Article extends \Widget
+class ArticleWidget extends \Widget
 {
 
 	/**
