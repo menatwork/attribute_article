@@ -34,9 +34,11 @@ class BackendEventListener
 	 */
 	public function setWidgetLanguage(ManipulateWidgetEvent $event)
 	{
+
 		if ($event->getWidget()->type != 'article') {
 		    return;
 		}
+        dump("setWidgetLanguage");
 		/* @var Driver $dataProvider */
 		$dataProvider = $event->getEnvironment()->getDataProvider($event->getModel()->getProviderName());
 		$language     = $dataProvider->getCurrentLanguage() ?: '-';
@@ -52,6 +54,7 @@ class BackendEventListener
 	 */
 	public function handlePostDuplicationModel(PostDuplicateModelEvent $event)
 	{
+	    
 		/* @var Model $objSourceModel */
 		$objSourceModel = $event->getSourceModel();
 

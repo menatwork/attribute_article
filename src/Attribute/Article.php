@@ -38,6 +38,7 @@ class Article extends BaseSimple implements ITranslated
      *
      * @param IMetaModel            $objMetaModel     The MetaModel instance this attribute belongs to.
      * @param array                 $arrData          The attribute information array.
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         IMetaModel $objMetaModel,

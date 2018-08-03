@@ -12,6 +12,8 @@
 
 namespace MetaModels\AttributeArticleBundle\Widgets;
 
+use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
+
 class ArticleWidget extends \Widget
 {
 
@@ -66,13 +68,14 @@ class ArticleWidget extends \Widget
 	 */
 	public function generate()
 	{
+	    //dump($dccompact->objEnvironment);
 		$strQuery = http_build_query([
 			'do'     => 'metamodel_' . $this->getRootMetaModelTable($this->strTable) ?: 'table_not_found',
 			'table'  => 'tl_content',
 			'ptable' => $this->strTable,
 			'id'     => $this->currentRecord,
 			'slot'   => $this->strName,
-			'lang'   => $this->lang,
+			'lang'   => $this->dataContainer->getEnvironment()->getDataProvider()->getCurrentLanguage(),
 			'popup'  => 1,
 			'nb'     => 1,
 			'rt'     => REQUEST_TOKEN,
