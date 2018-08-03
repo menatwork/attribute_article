@@ -26,12 +26,10 @@ class ArticleContent extends \tl_content
     {
         parent::__construct();
         $this->import('BackendUser', 'User');
-        dump("__construct ArticleContent");
     }
 
     public function save(\DataContainer $dc)
     {
-        dump("save");
         \Database::getInstance()
             ->prepare('UPDATE tl_content SET mm_slot=?, mm_lang=? WHERE id=?')
             ->execute(\Input::get('slot'), \Input::get('lang'), $dc->id)
@@ -131,7 +129,6 @@ class ArticleContent extends \tl_content
      */
     protected function checkAccessToElement($id, $ptable, $blnIsPid=false)
     {
-        dump("Article checkAccessToElement");
         $strScript = \Environment::get('script');
 
         if ($strScript != 'contao/page.php' && $strScript != 'contao/file.php') // Workaround for missing ptable when called via Page/File Picker

@@ -36,8 +36,7 @@ class GetOptionsListener
 
     public function getPropertyOptions(GetPropertyOptionsEvent $event)
     {
-//        dump("getPropertyOption");
-//        dump($event->getPropertyName());
+
     }
 
     /* Retrieve the options for the attributes.
@@ -48,8 +47,7 @@ class GetOptionsListener
     */
     public function getOptions(GetOptionsEvent $event)
     {
-//        dump("getOption");
-//        dump($event->getPropertyName());
+
         $model = $event->getModel();
 
         switch ($event->getPropertyName()) {

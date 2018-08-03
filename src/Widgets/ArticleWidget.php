@@ -68,7 +68,6 @@ class ArticleWidget extends \Widget
 	 */
 	public function generate()
 	{
-	    //dump($dccompact->objEnvironment);
 		$strQuery = http_build_query([
 			'do'     => 'metamodel_' . $this->getRootMetaModelTable($this->strTable) ?: 'table_not_found',
 			'table'  => 'tl_content',

@@ -26,8 +26,6 @@ class DC_TableMetaModelsArticle extends DC_Table //implements DataContainerInter
     public function __construct($strTable)
     {
         parent::__construct($strTable);
-        dump("__construct");
-        dump($GLOBALS['BE_MOD']['content']['metamodel_mm_member']);
     }
 
     /**
