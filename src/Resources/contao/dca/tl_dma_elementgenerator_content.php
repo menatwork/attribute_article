@@ -11,7 +11,14 @@
 /*
  * Callbacks
  */
-$GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = array('DMA\\DMAElementGeneratorCallbacks','content_onload');
+if(class_exists('DMABundle')) {
+    $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = array(
+        'DMA\\DMABundle\\Contao\\DMAElementGeneratorCallbacks',
+        'content_onload'
+    );
+}else {
+    $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = array('DMA\\DMAElementGeneratorCallbacks','content_onload');
+}
 
 
 /*
@@ -33,7 +40,9 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['dmaElementTpl'] = array
 
 
 // Compatibility
-if (TL_MODE == 'BE' && version_compare(VERSION.BUILD, '3.10','>=') && version_compare(VERSION.BUILD, '3.20','<'))
+if (TL_MODE == 'BE' && class_exists('DMABundle'))
 {
+    $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/dma/DMA-uncompressed.js';
+}elseif (TL_MODE == 'BE') {
     $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/dma_elementgenerator/html/DMA-uncompressed.js';
 }
