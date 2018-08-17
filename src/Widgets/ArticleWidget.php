@@ -88,7 +88,7 @@ class ArticleWidget extends \Widget
 
 		return sprintf(
 			'<div><p><a href="%s" class="tl_submit" onclick="%s">%s</a></p></div>',
-			'contao/main.php?' . $strQuery,
+			'contao?' . $strQuery,
 			'Backend.openModalIframe({width:768,title:\''.$this->strLabel.'\',url:this.href});return false',
 		    $edit
 		);

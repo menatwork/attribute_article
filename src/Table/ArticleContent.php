@@ -76,7 +76,7 @@ class ArticleContent extends \tl_content
                 // Check access to the article
                 if (!$this->checkAccessToElement(CURRENT_ID, $strParentTable, true))
                 {
-                    $this->redirect('contao/main.php?act=error');
+                    $this->redirect('contao?act=error');
                 }
                 break;
 
@@ -88,7 +88,7 @@ class ArticleContent extends \tl_content
                 // Check access to the parent element if a content element is moved
                 if ((\Input::get('act') == 'cutAll' || \Input::get('act') == 'copyAll') && !$this->checkAccessToElement(\Input::get('pid'), $strParentTable))
                 {
-                    $this->redirect('contao/main.php?act=error');
+                    $this->redirect('contao?act=error');
                 }
 
                 $objCes = $this->Database->prepare("SELECT id FROM tl_content WHERE ptable=? AND pid=?")
@@ -104,7 +104,7 @@ class ArticleContent extends \tl_content
                 // Check access to the parent element if a content element is moved
                 if (!$this->checkAccessToElement(\Input::get('pid'), $strParentTable))
                 {
-                    $this->redirect('contao/main.php?act=error');
+                    $this->redirect('contao?act=error');
                 }
             // NO BREAK STATEMENT HERE
 
@@ -112,7 +112,7 @@ class ArticleContent extends \tl_content
                 // Check access to the content element
                 if (!$this->checkAccessToElement(\Input::get('id'), $strParentTable))
                 {
-                    $this->redirect('contao/main.php?act=error');
+                    $this->redirect('contao?act=error');
                 }
                 break;
         }
