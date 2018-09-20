@@ -31,7 +31,7 @@ if (\substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content') {
         'MetaModels\\AttributeArticleBundle\\Table\\ArticleContent',
         'save'
     );
-    $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback']                       = array (
+    $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'] []                    = array (
         'MetaModels\\AttributeArticleBundle\\Table\\ArticleContent',
         'checkPermission'
     );

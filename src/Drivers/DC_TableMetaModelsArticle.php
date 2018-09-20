@@ -12,7 +12,7 @@
 
 namespace Contao;
 
-class DC_TableMetaModelsArticle extends \DC_Table //implements DataContainerInterface
+class DC_TableMetaModelsArticle extends \DC_Table
 {
 
     /**

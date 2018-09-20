@@ -8,8 +8,6 @@
 
 namespace MetaModels\AttributeArticleBundle\Table;
 
-
-//use Contao\CoreBundle\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
