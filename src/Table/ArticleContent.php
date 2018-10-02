@@ -145,19 +145,9 @@ class ArticleContent extends \tl_content
         // Invalid ID
         if ($objContent->numRows < 1)
         {
-            throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid content element ID ' . $id . '.');
-        }
+            $this->log('Invalid content element ID ' . $id, __METHOD__, TL_ERROR);
 
-        // The page is not mounted
-        if (!\in_array($objContent->id, $ptable))
-        {
-            throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to modify article ID ' . $objContent->aid . ' on page ID ' . $objContent->id . '.');
-        }
-
-        // Not enough permissions to modify the article
-        if (!$this->User->isAllowed(\BackendUser::CAN_EDIT_ARTICLES, $objContent->row()))
-        {
-            throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to modify article ID ' . $objContent->aid . '.');
+            return false;
         }
 
         return true;
