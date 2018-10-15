@@ -28,17 +28,17 @@ class AttributeTypeFactory extends AbstractAttributeTypeFactory
     private $eventDispatcher;
 
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         parent::__construct();
 
-		$this->typeName        = 'article';
-		$this->typeIcon        = 'bundles/metamodelsattributearticle/article.png';
-		$this->typeClass       = Article::class;
+        $this->typeName        = 'article';
+        $this->typeIcon        = 'bundles/metamodelsattributearticle/article.png';
+        $this->typeClass       = Article::class;
         $this->eventDispatcher = $eventDispatcher;
-	}
+    }
 
     /**
      * {@inheritDoc}

@@ -18,32 +18,33 @@ services:
               method: 'handlePostPasteModel'
             }
     metamodels.attribute_article.listeners.get_property_options:
-            class: MetaModels\AttributeArticleBundle\EventListener\GetOptionsListener
-            arguments:
-              - '@metamodels.factory'
-            tags:
-              - {
-                  name: kernel.event_listener,
-                  event: 'dc-general.view.contao2backend.get-property-options',
-                  method: getPropertyOptions
-                }
+        class: MetaModels\AttributeArticleBundle\EventListener\GetOptionsListener
+        arguments:
+          - '@metamodels.factory'
+        tags:
+          - {
+              name: kernel.event_listener,
+              event: 'dc-general.view.contao2backend.get-property-options',
+              method: getPropertyOptions
+            }
     metamodels.attribute_article.backend_listner.get_options:
-           class: MetaModels\AttributeArticleBundle\EventListener\GetOptionsListener
-           arguments:
-             - '@metamodels.factory'
-           tags:
-             - {
-                  name: kernel.event_listener,
-                  event: 'men-at-work.multi-column-wizard.get-options',
-                  method: getOptions }
+        class: MetaModels\AttributeArticleBundle\EventListener\GetOptionsListener
+        arguments:
+          - '@metamodels.factory'
+        tags:
+          - {
+               name: kernel.event_listener,
+               event: 'men-at-work.multi-column-wizard.get-options',
+               method: getOptions
+            }
     metamodelsattribute_article.backend_listner.auth.listener:
-          class: MetaModels\AttributeArticleBundle\EventListener\InitializeListener
-          arguments:
-              - "@security.token_storage"
-              - "@security.authentication.trust_resolver"
-              - "@contao.routing.scope_matcher"
-              - "@metamodels.view_combination"
-          tags:
-              - name: kernel.event_listener
-                event: kernel.request
-                priority: -600
+        class: MetaModels\AttributeArticleBundle\EventListener\InitializeListener
+        arguments:
+            - "@security.token_storage"
+            - "@security.authentication.trust_resolver"
+            - "@contao.routing.scope_matcher"
+            - "@metamodels.view_combination"
+        tags:
+            - name: kernel.event_listener
+              event: kernel.request
+              priority: -600

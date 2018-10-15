@@ -31,20 +31,20 @@ class Article extends BaseSimple implements ITranslated
      */
     private $eventDispatcher;
 
-	private static $arrCallIds = [];
+    private static $arrCallIds = [];
 
     /**
      * Create a new instance.
      *
-     * @param IMetaModel            $objMetaModel     The MetaModel instance this attribute belongs to.
-     * @param array                 $arrData          The attribute information array.
+     * @param IMetaModel               $objMetaModel The MetaModel instance this attribute belongs to.
+     * @param array                    $arrData      The attribute information array.
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         IMetaModel $objMetaModel,
         $arrData = [],
         EventDispatcherInterface $eventDispatcher = null
-    ){
+    ) {
         parent::__construct($objMetaModel, $arrData);
 
         if (null === $eventDispatcher) {
@@ -64,27 +64,29 @@ class Article extends BaseSimple implements ITranslated
     /**
      * @param       $strPattern
      * @param array $arrLanguages
+     *
      * @return string[]
      */
-    public function searchForInLanguages($strPattern, $arrLanguages = array()) {
+    public function searchForInLanguages($strPattern, $arrLanguages = array())
+    {
         // Needed to fake implement ITranslate.
         return [];
     }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getSQLDataType()
-	{
-		return 'varchar(255) NOT NULL default \'\'';
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function getSQLDataType()
+    {
+        return 'varchar(255) NOT NULL default \'\'';
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getAttributeSettingNames()
-	{
-		return array_merge(parent::getAttributeSettingNames(), array(
+    /**
+     * {@inheritdoc}
+     */
+    public function getAttributeSettingNames()
+    {
+        return array_merge(parent::getAttributeSettingNames(), array(
             //'isunique',
             //'searchable',
             //'filterable',
@@ -95,95 +97,101 @@ class Article extends BaseSimple implements ITranslated
             //'trailingSlash',
             //'spaceToUnderscore',
             //'rgxp'
-		));
-	}
+        ));
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getFieldDefinition($arrOverrides = array())
-	{
-		$arrFieldDef              = parent::getFieldDefinition($arrOverrides);
-		$arrFieldDef['inputType'] = 'MetaModelAttributeArticle';
+    /**
+     * {@inheritdoc}
+     */
+    public function getFieldDefinition($arrOverrides = array())
+    {
+        $arrFieldDef              = parent::getFieldDefinition($arrOverrides);
+        $arrFieldDef['inputType'] = 'MetaModelAttributeArticle';
 
-		return $arrFieldDef;
-	}
+        return $arrFieldDef;
+    }
 
-	/**
-	 * @param $arrValues
-	 * @param $strLangCode
+    /**
+     * @param $arrValues
+     * @param $strLangCode
+     *
      * @return void
-	 */
-	public function setTranslatedDataFor($arrValues, $strLangCode) {
-	    // Needed to fake implement ITranslate.
-	}
+     */
+    public function setTranslatedDataFor($arrValues, $strLangCode)
+    {
+        // Needed to fake implement ITranslate.
+    }
 
-	/**
-	 * @param $arrIds
-	 * @param $strLangCode
+    /**
+     * @param $arrIds
+     * @param $strLangCode
+     *
      * @return mixed[]
-	 */
-	public function getTranslatedDataFor($arrIds, $strLangCode)
-	{
-		// Generate only for frontend (speeds up the backend a little)
-		if (TL_MODE == 'BE') return [];
+     */
+    public function getTranslatedDataFor($arrIds, $strLangCode)
+    {
+        // Generate only for frontend (speeds up the backend a little)
+        if (TL_MODE == 'BE') {
+            return [];
+        }
 
-		$strTable    = $this->getMetaModel()->getTableName();
-		$strColumn   = $this->getColName();
-		$strLanguage = $this->getMetaModel()->isTranslated() ? $strLangCode : '-';
-		$arrData     = [];
+        $strTable    = $this->getMetaModel()->getTableName();
+        $strColumn   = $this->getColName();
+        $strLanguage = $this->getMetaModel()->isTranslated() ? $strLangCode : '-';
+        $arrData     = [];
 
-		foreach ($arrIds as $intId)
-		{
-			// Continue if it's a recursive call
-			$strCallId  = $strTable . '_' . $strColumn . '_' . $strLanguage . '_' . $intId;
-			if (isset(static::$arrCallIds[$strCallId])) {
-				$arrData[$intId]['value'] = sprintf('RECURSION: %s', $strCallId);
-				continue;
-			}
-			static::$arrCallIds[$strCallId] = true;
+        foreach ($arrIds as $intId) {
+            // Continue if it's a recursive call
+            $strCallId = $strTable . '_' . $strColumn . '_' . $strLanguage . '_' . $intId;
+            if (isset(static::$arrCallIds[$strCallId])) {
+                $arrData[$intId]['value'] = sprintf('RECURSION: %s', $strCallId);
+                continue;
+            }
+            static::$arrCallIds[$strCallId] = true;
 
-			$objContent = \ContentModel::findPublishedByPidAndTable($intId, $strTable);
-			$arrContent = [];
+            $objContent = \ContentModel::findPublishedByPidAndTable($intId, $strTable);
+            $arrContent = [];
 
-			if ($objContent !== null) {
-				while ($objContent->next()) {
-					if ($objContent->mm_slot == $strColumn &&
-						$objContent->mm_lang == $strLanguage
-					) {
-						$arrContent[] = $this->getContentElement($objContent->current());
-					}
-				}
-			}
+            if ($objContent !== null) {
+                while ($objContent->next()) {
+                    if ($objContent->mm_slot == $strColumn &&
+                        $objContent->mm_lang == $strLanguage
+                    ) {
+                        $arrContent[] = $this->getContentElement($objContent->current());
+                    }
+                }
+            }
 
-			$arrData[$intId]['value'] = $arrContent;
-			unset(static::$arrCallIds[$strCallId]);
-		}
+            $arrData[$intId]['value'] = $arrContent;
+            unset(static::$arrCallIds[$strCallId]);
+        }
 
-		return $arrData;
-	}
+        return $arrData;
+    }
 
-	/**
-	 * @param $arrIds
-	 * @param $strLangCode
+    /**
+     * @param $arrIds
+     * @param $strLangCode
+     *
      * @return void
-	 */
-	public function unsetValueFor($arrIds, $strLangCode) {
-		// Needed to fake implement ITranslate.
-	}
+     */
+    public function unsetValueFor($arrIds, $strLangCode)
+    {
+        // Needed to fake implement ITranslate.
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	private function getContentElement($objContent)
-	{
-		if (version_compare(VERSION, '3.5', '>=')) {
-			return \Controller::getContentElement($objContent);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    private function getContentElement($objContent)
+    {
+        if (version_compare(VERSION, '3.5', '>=')) {
+            return \Controller::getContentElement($objContent);
+        }
 
-		// In contao < 3.5 the function is not directly available
-		if (!class_exists('ControllerHelper')) {
-			eval('
+        // In contao < 3.5 the function is not directly available
+        if (!class_exists('ControllerHelper')) {
+            eval('
 				class ControllerHelper extends Controller {
 					public function __construct() {
 						// Needed as the parent constructor is not public!
@@ -194,10 +202,11 @@ class Article extends BaseSimple implements ITranslated
 					}
 				}
 			');
-		}
+        }
 
-		$objControllerHelper = new \ControllerHelper();
-		return $objControllerHelper->getContentElement($objContent);
-	}
+        $objControllerHelper = new \ControllerHelper();
+
+        return $objControllerHelper->getContentElement($objContent);
+    }
 
 }

@@ -13,7 +13,7 @@ class MetaModelAttributeArticle extends \Backend
 {
     public function initializeSystem()
     {
-       //Function moved in InitializeListener
+        //Function moved in InitializeListener
     }
 
     public function addMainLangContent($dc)
@@ -31,25 +31,23 @@ class MetaModelAttributeArticle extends \Backend
         if ($strLanguage == $strMainLanguage) {
             \Message::addError('Hauptsprache kann nicht in die Hauptsprache kopiert werden.'); // TODO übersetzen
             \Controller::redirect(\System::getReferer());
+
             return;
         }
 
         $objContent = \Database::getInstance()
             ->prepare('SELECT * FROM tl_content WHERE pid=? AND ptable=? AND mm_slot=? AND mm_lang=?')
-            ->execute($intId, $strParentTable, $strSlot, $strMainLanguage)
-        ;
+            ->execute($intId, $strParentTable, $strSlot, $strMainLanguage);
 
-        for ($i=0; $objContent->next(); $i++)
-        {
-            $arrContent = $objContent->row();
+        for ($i = 0; $objContent->next(); $i++) {
+            $arrContent            = $objContent->row();
             $arrContent['mm_lang'] = $strLanguage;
             unset($arrContent['id']);
 
             \Database::getInstance()
                 ->prepare('INSERT INTO tl_content %s')
                 ->set($arrContent)
-                ->execute()
-            ;
+                ->execute();
         }
 
         \Message::addInfo(sprintf('%s Element(e) kopiert', $i)); // TODO übersetzen
