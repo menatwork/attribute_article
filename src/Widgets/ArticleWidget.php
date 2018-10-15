@@ -29,6 +29,14 @@ class ArticleWidget extends \Widget
 	 */
 	protected $blnForAttribute = false;
 
+    /**
+     * The language of the current context.
+     * If no language support is needed or not set use '-'.
+     *
+     * @var string
+     */
+    protected $lang = '-';
+
 	/**
 	 * Template
 	 * @var string
@@ -74,7 +82,7 @@ class ArticleWidget extends \Widget
 			'ptable' => $this->strTable,
 			'id'     => $this->currentRecord,
 			'slot'   => $this->strName,
-			'lang'   => $this->dataContainer->getEnvironment()->getDataProvider()->getCurrentLanguage(),
+            'lang'   => (($this->lang) ?: '-'),
 			'popup'  => 1,
 			'nb'     => 1,
 			'rt'     => REQUEST_TOKEN,
