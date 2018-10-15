@@ -17,127 +17,146 @@ use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
 class ArticleWidget extends \Widget
 {
 
-	/**
-	 * Submit user input
-	 * @var boolean
-	 */
-	protected $blnSubmitInput = false;
+    /**
+     * Submit user input
+     *
+     * @var boolean
+     */
+    protected $blnSubmitInput = false;
 
-	/**
-	 * Add a for attribute
-	 * @var boolean
-	 */
-	protected $blnForAttribute = false;
+    /**
+     * Add a for attribute
+     *
+     * @var boolean
+     */
+    protected $blnForAttribute = false;
 
-	/**
-	 * Template
-	 * @var string
-	 */
-	protected $strTemplate = 'be_widget';
+    /**
+     * The language of the current context.
+     * If no language support is needed or not set use '-'.
+     *
+     * @var string
+     */
+    protected $lang = '-';
+
+    /**
+     * Template
+     *
+     * @var string
+     */
+    protected $strTemplate = 'be_widget';
 
 
-	/**
-	 * @param array
-	 */
-	public function __construct($arrAttributes=null)
-	{
-		parent::__construct($arrAttributes);
-	}
+    /**
+     * @param array
+     */
+    public function __construct($arrAttributes = null)
+    {
+        parent::__construct($arrAttributes);
+    }
 
-	/**
-	 * @param string
-	 * @param mixed
-	 */
-	public function __set($strKey, $varValue)
-	{
-		parent::__set($strKey, $varValue);
-	}
+    /**
+     * @param string
+     *
+     * @param mixed
+     */
+    public function __set($strKey, $varValue)
+    {
+        parent::__set($strKey, $varValue);
+    }
 
-	/**
-	 * @param mixed
-	 * @return mixed
-	 */
-	protected function validator($varInput)
-	{
-		return parent::validator($varInput);
-	}
+    /**
+     * @param mixed
+     *
+     * @return mixed
+     */
+    protected function validator($varInput)
+    {
+        return parent::validator($varInput);
+    }
 
-	/**
-	 * Generate the widget and return it as string
-	 * @return string
-	 */
-	public function generate()
-	{
-		$strQuery = http_build_query([
-			'do'     => 'metamodel_' . $this->getRootMetaModelTable($this->strTable) ?: 'table_not_found',
-			'table'  => 'tl_content',
-			'ptable' => $this->strTable,
-			'id'     => $this->currentRecord,
-			'slot'   => $this->strName,
-			'lang'   => $this->dataContainer->getEnvironment()->getDataProvider()->getCurrentLanguage(),
-			'popup'  => 1,
-			'nb'     => 1,
-			'rt'     => REQUEST_TOKEN,
-		]);
+    /**
+     * Generate the widget and return it as string
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public function generate()
+    {
+        $strQuery = http_build_query([
+            'do'     => 'metamodel_' . $this->getRootMetaModelTable($this->strTable) ?: 'table_not_found',
+            'table'  => 'tl_content',
+            'ptable' => $this->strTable,
+            'id'     => $this->currentRecord,
+            'slot'   => $this->strName,
+            'lang'   => (($this->lang) ?: '-'),
+            'popup'  => 1,
+            'nb'     => 1,
+            'rt'     => REQUEST_TOKEN,
+        ]);
 
-		if(!empty($GLOBALS['TL_LANG']['MSC']['edit'])) {
-		    $edit = $GLOBALS['TL_LANG']['MSC']['edit'];
-        }else {
+        if (!empty($GLOBALS['TL_LANG']['MSC']['edit'])) {
+            $edit = $GLOBALS['TL_LANG']['MSC']['edit'];
+        } else {
             $edit = "Bearbeiten";
         }
 
-		return sprintf(
-			'<div><p><a href="%s" class="tl_submit" onclick="%s">%s</a></p></div>',
-			'contao?' . $strQuery,
-			'Backend.openModalIframe({width:768,title:\''.$this->strLabel.'\',url:this.href});return false',
-		    $edit
-		);
-	}
+        return sprintf(
+            '<div><p><a href="%s" class="tl_submit" onclick="%s">%s</a></p></div>',
+            'contao?' . $strQuery,
+            'Backend.openModalIframe({width:768,title:\'' . $this->strLabel . '\',url:this.href});return false',
+            $edit
+        );
+    }
 
-	/**
-	 * @param string
-	 * @param mixed
-	 */
-	private function getRootMetaModelTable($strTable)
-	{
-		$arrTables = [];
-		$objTables = \Database::getInstance()
-			->execute('
+    /**
+     * @param string
+     *
+     * @param mixed
+     *
+     * @return bool
+     *
+     * @throws \Exception
+     */
+    private function getRootMetaModelTable($strTable)
+    {
+        $arrTables = [];
+        $objTables = \Database::getInstance()
+            ->execute('
 				SELECT tableName, d.renderType, d.ptable
 				FROM tl_metamodel AS m
 				JOIN tl_metamodel_dca AS d
 				ON m.id = d.pid
-			')
-		;
+			');
 
-		while ($objTables->next()) {
-			$arrTables[$objTables->tableName] = [
-				'renderType' => $objTables->renderType,
-				'ptable'     => $objTables->ptable,
-			];
-		}
+        while ($objTables->next()) {
+            $arrTables[$objTables->tableName] = [
+                'renderType' => $objTables->renderType,
+                'ptable'     => $objTables->ptable,
+            ];
+        }
 
-		$getTable = function($strTable) use (&$getTable, $arrTables)
-		{
-			if (!isset($arrTables[$strTable])) {
-				return false;
-			}
+        $getTable = function ($strTable) use (&$getTable, $arrTables) {
+            if (!isset($arrTables[$strTable])) {
+                return false;
+            }
 
-			$arrTable = $arrTables[$strTable];
+            $arrTable = $arrTables[$strTable];
 
-			switch ($arrTable['renderType']) {
-				case 'standalone':
-					return $strTable;
+            switch ($arrTable['renderType']) {
+                case 'standalone':
+                    return $strTable;
 
-				case 'ctable':
-					return $getTable($arrTable['ptable']);
+                case 'ctable':
+                    return $getTable($arrTable['ptable']);
 
-				default:
-					throw new \Exception('Unexpected case: '.$arrTable['renderType']);
-			}
-		};
+                default:
+                    throw new \Exception('Unexpected case: ' . $arrTable['renderType']);
+            }
+        };
 
-		return $getTable($strTable);
-	}
+        return $getTable($strTable);
+    }
 
 }
