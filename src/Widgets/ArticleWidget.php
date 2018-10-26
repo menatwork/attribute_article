@@ -84,13 +84,21 @@ class ArticleWidget extends \Widget
      */
     public function generate()
     {
+        // Update the language.
+        $currentLang = $this
+            ->dataContainer
+            ->getEnvironment()
+            ->getDataProvider()
+            ->getCurrentLanguage();
+        $this->lang  = ($currentLang) ?: '-';
+
         $strQuery = http_build_query([
             'do'     => 'metamodel_' . $this->getRootMetaModelTable($this->strTable) ?: 'table_not_found',
             'table'  => 'tl_content',
             'ptable' => $this->strTable,
             'id'     => $this->currentRecord,
             'slot'   => $this->strName,
-            'lang'   => (($this->lang) ?: '-'),
+            'lang'   => $this->lang,
             'popup'  => 1,
             'nb'     => 1,
             'rt'     => REQUEST_TOKEN,
