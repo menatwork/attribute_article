@@ -135,10 +135,12 @@ class Article extends BaseSimple implements ITranslated
             return [];
         }
 
-        $strTable    = $this->getMetaModel()->getTableName();
-        $strColumn   = $this->getColName();
-        $strLanguage = $this->getMetaModel()->isTranslated() ? $strLangCode : '-';
-        $arrData     = [];
+        $strTable            = $this->getMetaModel()->getTableName();
+        $strColumn           = $this->getColName();
+        $strLanguage         = $this->getMetaModel()->isTranslated() ? $strLangCode : '-';
+        $strFallbackLanguage = $this->getMetaModel()->isTranslated() ?
+            $this->getMetaModel()->getFallbackLanguage() : '-';
+        $arrData             = [];
 
         foreach ($arrIds as $intId) {
             // Continue if it's a recursive call
@@ -149,20 +151,33 @@ class Article extends BaseSimple implements ITranslated
             }
             static::$arrCallIds[$strCallId] = true;
 
-            $objContent = \ContentModel::findPublishedByPidAndTable($intId, $strTable);
-            $arrContent = [];
+            $objContent         = \ContentModel::findPublishedByPidAndTable($intId, $strTable);
+            $arrContent         = [];
+            $arrContentFallback = [];
 
             if ($objContent !== null) {
                 while ($objContent->next()) {
-                    if ($objContent->mm_slot == $strColumn &&
-                        $objContent->mm_lang == $strLanguage
+                    if ($objContent->mm_slot == $strColumn
+                        && $objContent->mm_lang == $strLanguage
                     ) {
                         $arrContent[] = $this->getContentElement($objContent->current());
+                    } else if ($objContent->mm_slot == $strColumn
+                               && $strLanguage != $strFallbackLanguage
+                               && $objContent->mm_lang == $strFallbackLanguage
+                    ) {
+                        $arrContentFallback[] = $this->getContentElement($objContent->current());
                     }
                 }
             }
 
-            $arrData[$intId]['value'] = $arrContent;
+            if (!empty($arrContent)) {
+                $arrData[$intId]['value'] = $arrContent;
+            } else if (!empty($arrContentFallback)) {
+                $arrData[$intId]['value'] = $arrContentFallback;
+            } else {
+                $arrData[$intId]['value'] = [];
+            }
+
             unset(static::$arrCallIds[$strCallId]);
         }
 
